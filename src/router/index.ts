@@ -1,3 +1,4 @@
+import { abortAllApiRequests } from '@/auth/APIclient'
 import { loginLoader } from '@/auth/loaders/loginLoader'
 import { protectedLoader } from '@/auth/loaders/protectedLoader'
 import { requirePermission } from '@/auth/loaders/protectWithPermission'
@@ -42,6 +43,18 @@ const router = createBrowserRouter([
     Component: NotFound,
   },
 ])
+
+// For abort requetes
+let previousPathname = router.state.location.pathname
+
+router.subscribe(state => {
+  const currentPathname = state.location.pathname
+
+  if (currentPathname !== previousPathname) {
+    abortAllApiRequests()
+    previousPathname = currentPathname
+  }
+})
 
 export const routerProviderProps: RouterProviderProps = {
   router,

@@ -1,6 +1,16 @@
 import { refreshSession } from '@/auth/refreshSession'
 import { tokenStore } from '@/auth/tokenStore'
+import type { InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
+
+let navigationController = new AbortController()
+
+export const abortAllApiRequests = () => {
+  navigationController.abort()
+  navigationController = new AbortController()
+}
+
+const MAXIMUM_RETRY = 2
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -11,11 +21,18 @@ export const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   config => {
+    const requestConfig = config as InternalAxiosRequestConfig
+
+    // Attach the current navigation signal to every request unless custom signal exists.
+    if (!requestConfig.signal) {
+      requestConfig.signal = navigationController.signal
+    }
+
     const token = tokenStore.get()
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      requestConfig.headers.Authorization = `Bearer ${token}`
     }
-    return config
+    return requestConfig
   },
   error => Promise.reject(error),
 )
@@ -30,11 +47,16 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    // Navigation-triggered cancellations should never be retried.
+    if (error.code === 'ERR_CANCELED' || axios.isCancel(error)) {
+      return Promise.reject(error)
+    }
+
     // Add a retry count to config if not present
     originalRequest._retryCount = originalRequest._retryCount || 0
 
     // Only retry at most 2 times
-    if (originalRequest._retryCount < 2) {
+    if (originalRequest._retryCount < MAXIMUM_RETRY) {
       originalRequest._retryCount += 1
 
       // Handle 401 logic with token refresh, otherwise just retry
