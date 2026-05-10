@@ -2,7 +2,7 @@ import { tokenStore } from '@/auth/tokenStore'
 import type { PermissionRequirement } from '@/auth/Types'
 import { checkPermissions } from '@/auth/utils/checkPermissions'
 import { redirectToLogin } from '@/auth/utils/redirect'
-import { redirect, type LoaderFunctionArgs } from 'react-router-dom'
+import { type LoaderFunctionArgs } from 'react-router-dom'
 
 export function requirePermission(requirement: PermissionRequirement) {
   return async ({ request }: LoaderFunctionArgs) => {
@@ -15,7 +15,10 @@ export function requirePermission(requirement: PermissionRequirement) {
     const allowed = checkPermissions(permissions, requirement)
 
     if (!allowed) {
-      return redirect('/403')
+      throw new Response('You do not have permission to access this page.', {
+        status: 403,
+        statusText: 'Forbidden',
+      })
     }
 
     return null

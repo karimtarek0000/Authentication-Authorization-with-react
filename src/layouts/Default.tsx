@@ -12,8 +12,8 @@ export const Default = () => {
   return (
     <>
       {isNavigating && <TopProgressBar />}
-      <h1 className="text-7xl">Bynow</h1>
-      <div className="mt-5">
+      <h1 className="text-7xl">App</h1>
+      <div className="my-5">
         <Header />
       </div>
       <Outlet />
