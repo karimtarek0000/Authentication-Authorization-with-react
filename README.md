@@ -1,7 +1,6 @@
 # Authentication & Authorization
 
-A production-ready authentication system for applications. Built with React, React Router (data
-APIs), and Axios.
+Authentication system for applications. Built with React, React Router (data APIs), and Axios.
 
 ## Folder Structure
 
