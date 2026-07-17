@@ -118,22 +118,23 @@ export const useAuthService = () => {
   // ----- UseEffects -----
   // When the app open, restore the session
   useEffect(() => {
-    // const restore = async () => {
-    //   const result = await authService.restoreSession()
-    //   if (result) {
-    //     setUserAuth({
-    //       user: result.user,
-    //       permissions: result.permissions,
-    //       isLoading: false,
-    //       isAuth: true,
-    //     })
-    //   } else {
-    //     setUserAuth(initialAuthState)
-    //   }
-    // }
-    // if (localStorage.getItem('hasAuth')) {
-    //   restore()
-    // }
+    const restore = async () => {
+      const result = await authService.restoreSession()
+      if (result) {
+        setUserAuth({
+          user: result.user,
+          permissions: result.permissions,
+          isLoading: false,
+          isAuth: true,
+        })
+      } else {
+        setUserAuth(initialAuthState)
+      }
+    }
+
+    if (localStorage.getItem('hasAuth')) {
+      restore()
+    }
   }, [])
 
   return { userAuth, login, logout }
