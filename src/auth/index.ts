@@ -9,6 +9,7 @@ export * from './Service'
 export * from './Sync'
 export * from './Types'
 export * from './utils'
-import { CanView } from './Components/CanView'
+import CanView from './Components/CanView'
+import Interceptor from './Components/Interceptor'
 
-export { CanView }
+export { CanView, Interceptor }
