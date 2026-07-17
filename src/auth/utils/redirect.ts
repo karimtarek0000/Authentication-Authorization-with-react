@@ -17,7 +17,7 @@ export function redirectToLogin(request: Request) {
 export const ensureSessionRestored = async () => {
   if (tokenStore.get()) return
 
-  if (!tokenStore.hasHint()) return
+  if (!tokenStore.hasAuth()) return
 
   return await authService.restoreSession()
 }

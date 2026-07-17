@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react'
 
-export * from './provider.type'
-
 export type AuthEvent = 'logout'
 
 export type CanProps = {
@@ -15,6 +13,7 @@ type AuthUser = {
 }
 
 export type Login = {
+  accessToken: string
   user: AuthUser
   permissions: Permission[]
 }
@@ -24,10 +23,11 @@ export type AuthProviderProps = {
 }
 
 export type AuthState = {
+  accessToken: string
   user: AuthUser | null
   permissions: Permission[]
-  isLoading: boolean
   isAuth: boolean
+  isLoading: boolean
 }
 
 export type AuthActions = {

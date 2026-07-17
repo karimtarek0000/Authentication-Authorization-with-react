@@ -1,45 +1,60 @@
 import {
   api,
-  authChannel,
   handleError,
   LOGIN,
+  PROFILE,
+  REFRESH_TOKEN,
   type AuthActions,
   type AuthState,
   type Login,
 } from '@/auth'
-import { refreshSession } from '@/auth/refreshSession'
 import { tokenStore } from '@/auth/tokenStore'
-import { AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
 let restorePromise: Promise<Login> | null = null
+let refreshPromise: Promise<string | null> | null = null
+
+const initialAuthState: AuthState = {
+  accessToken: '',
+  user: null,
+  permissions: [],
+  isLoading: false,
+  isAuth: false,
+}
 
 export const authService = {
-  async logout(): Promise<void> {
-    try {
-      await api.post('/logout')
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.warn('Logout API failed, clearing local state anyway')
-      }
-    } finally {
-      tokenStore.clear()
-      authChannel.broadcast('logout')
-    }
-  },
+  refreshSession(): Promise<string | null> {
+    if (refreshPromise) return refreshPromise
 
+    refreshPromise = (async () => {
+      try {
+        const response = await axios.post(REFRESH_TOKEN, {}, { withCredentials: true })
+        const { accessToken } = response.data
+        tokenStore.set(accessToken, [])
+        return accessToken as string
+      } catch {
+        tokenStore.clear()
+        return null
+      } finally {
+        refreshPromise = null
+      }
+    })()
+
+    return refreshPromise
+  },
   async restoreSession(): Promise<Login> {
     if (restorePromise) return restorePromise
 
     restorePromise = (async () => {
-      const token = await refreshSession()
+      const token = await this.refreshSession()
       if (!token) return null
 
       try {
-        const { data } = await api.get('/me')
+        const { data } = await api.get(PROFILE)
 
-        tokenStore.set(token, data.permissions)
         return {
+          accessToken: token,
           user: { name: data.name, email: data.email },
           permissions: data.permissions,
         }
@@ -57,15 +72,8 @@ export const authService = {
   },
 }
 
-//
-const initialAuthState: AuthState = {
-  user: null,
-  permissions: [],
-  isLoading: false,
-  isAuth: false,
-}
 export const useAuthService = () => {
-  const [state, setState] = useState<AuthState>({
+  const [userAuth, setUserAuth] = useState<AuthState>({
     ...initialAuthState,
     isLoading: true,
   })
@@ -77,14 +85,15 @@ export const useAuthService = () => {
         data: { user, permissions, accessToken },
       } = await api.post(LOGIN, { email, password })
 
-      tokenStore.set(accessToken, permissions)
-
-      setState({
+      setUserAuth({
+        accessToken,
         user,
         permissions,
         isLoading: false,
         isAuth: true,
       })
+
+      localStorage.set('hasAuth', 'true')
 
       return user
     } catch (error) {
@@ -92,56 +101,60 @@ export const useAuthService = () => {
     }
   }, [])
 
-  const logout = useCallback(async () => {
-    await authService.logout()
+  const logout = useCallback(() => {
+    setUserAuth(initialAuthState)
+    localStorage.removeItem('hasAuth')
+    tokenStore.clear()
+    // authChannel.broadcast('logout')
   }, [])
 
   // ----- UseEffects -----
-  // When a user opens the app, try to restore the session
+  // When the app open, restore the session
   useEffect(() => {
     const restore = async () => {
       const result = await authService.restoreSession()
 
       if (result) {
-        setState({
+        setUserAuth({
+          accessToken: result.accessToken,
           user: result.user,
           permissions: result.permissions,
           isLoading: false,
           isAuth: true,
         })
       } else {
-        setState(initialAuthState)
+        setUserAuth(initialAuthState)
       }
     }
 
-    if (tokenStore.hasHint()) {
+    if (localStorage.getItem('hasAuth')) {
       restore()
     }
   }, [])
 
-  // Notify when token is removed (logout, refresh failed, etc.)
-  useEffect(() => {
-    const unsubscribe = tokenStore.subscribe(token => {
-      if (token === null) {
-        setState(initialAuthState)
-      }
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [])
-
-  // This is subscribing to the authChannel to listen for logout events
-  useEffect(() => {
-    const unsubscribe = authChannel.subscribe(event => {
-      if (event === 'logout') {
-        tokenStore.clear()
-      }
-    })
-
-    return unsubscribe
-  }, [])
-
-  return { state, login, logout }
+  return { userAuth, login, logout }
 }
+
+// Notify when token is removed (logout, refresh failed, etc.)
+// useEffect(() => {
+//   const unsubscribe = tokenStore.subscribe(token => {
+//     if (token === null) {
+//       setUserAuth(initialAuthState)
+//     }
+//   })
+
+//   return () => {
+//     unsubscribe()
+//   }
+// }, [])
+
+// This is subscribing to the authChannel to listen for logout events
+// useEffect(() => {
+//   const unsubscribe = authChannel.subscribe(event => {
+//     if (event === 'logout') {
+//       tokenStore.clear()
+//     }
+//   })
+
+//   return unsubscribe
+// }, [])

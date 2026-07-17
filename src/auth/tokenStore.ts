@@ -28,7 +28,7 @@ export const tokenStore = {
     window.location.href = '/login'
   },
 
-  hasHint: () => localStorage.getItem(HINT_KEY) === '1',
+  hasAuth: () => localStorage.getItem(HINT_KEY) === '1',
 
   subscribe(fn: TokenListener) {
     listeners.add(fn)

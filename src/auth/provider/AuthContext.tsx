@@ -8,12 +8,12 @@ import {
 import { useMemo } from 'react'
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { state, login, logout } = useAuthService()
+  const { userAuth, login, logout } = useAuthService()
 
   const actions = useMemo<AuthActions>(() => ({ login, logout }), [login, logout])
 
   return (
-    <AuthStateContext.Provider value={state}>
+    <AuthStateContext.Provider value={userAuth}>
       <AuthActionsContext.Provider value={actions}>{children}</AuthActionsContext.Provider>
     </AuthStateContext.Provider>
   )
