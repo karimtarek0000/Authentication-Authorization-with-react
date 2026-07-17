@@ -1,6 +1,5 @@
-import { redirectToFromParam } from '@/auth/utils/redirect'
+import { authService, redirectToFromParam } from '@/auth'
 import { type LoaderFunctionArgs } from 'react-router'
-import { authService } from '../Service'
 
 export default async function loginLoader({ request }: LoaderFunctionArgs) {
   await authService.restoreSession()

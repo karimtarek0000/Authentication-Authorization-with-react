@@ -1,5 +1,4 @@
-import { authService } from '@/auth'
-import { redirectToLogin } from '@/auth/utils/redirect'
+import { authService, redirectToLogin } from '@/auth'
 import { type LoaderFunctionArgs } from 'react-router'
 
 export default async function protectedLoader({ request }: LoaderFunctionArgs) {
@@ -9,5 +8,5 @@ export default async function protectedLoader({ request }: LoaderFunctionArgs) {
     return redirectToLogin(request)
   }
 
-  return true
+  return null
 }

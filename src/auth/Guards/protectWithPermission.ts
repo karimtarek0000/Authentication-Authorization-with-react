@@ -1,6 +1,5 @@
-import { $checkPermissions, authService, type PermissionRequirement } from '@/auth'
+import { $checkPermissions, authService, redirectToLogin, type PermissionRequirement } from '@/auth'
 import { type LoaderFunctionArgs } from 'react-router-dom'
-import { redirectToLogin } from '../utils/redirect'
 
 export default function protectWithPermission(requirement: PermissionRequirement) {
   return async ({ request }: LoaderFunctionArgs) => {
