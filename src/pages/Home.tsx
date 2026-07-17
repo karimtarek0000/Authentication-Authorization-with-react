@@ -24,7 +24,7 @@ const Home = () => {
   return (
     <>
       <h1>Home</h1>
-      <h3>isAuth: {isAuth}</h3>
+      <h3>isAuth: {`${isAuth}`}</h3>
       <h3>Permissions: {permissions.join(' / ')}</h3>
       <h3>
         id: {user?.id}

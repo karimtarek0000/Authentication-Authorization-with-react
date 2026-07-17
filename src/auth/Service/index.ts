@@ -24,6 +24,7 @@ const initialAuthState: AuthState = {
 export const authService = {
   accessToken: '',
   permissions: [],
+  hasAuth: JSON.stringify(localStorage.getItem('hasAuth')),
 
   refreshSession() {
     if (refreshPromise) return refreshPromise
@@ -85,13 +86,6 @@ export const authService = {
 
     return restorePromise
   },
-  getHasAuth() {
-    try {
-      return JSON.stringify(localStorage.getItem('hasAuth'))
-    } catch {
-      return null
-    }
-  },
   logout() {
     localStorage.removeItem('hasAuth')
     location.reload()
@@ -125,27 +119,29 @@ export const useAuthService = () => {
 
   const logout = useCallback(() => authService.logout(), [])
 
+  const restoreSession = useCallback(async () => {
+    const result = await authService.restoreSession()
+
+    if (result) {
+      const { user, permissions, role } = result
+      setUserAuth({
+        user,
+        permissions,
+        role,
+        isAuth: true,
+      })
+    }
+  }, [])
+
   // ----- UseEffects -----
   // Restore Session
   useEffect(() => {
-    const restore = async () => {
-      const result = await authService.restoreSession()
+    if (!authService.hasAuth) return
 
-      if (result) {
-        const { user, permissions, role } = result
-        setUserAuth({
-          user,
-          permissions,
-          role,
-          isAuth: true,
-        })
-      }
-    }
+    const restoreAuth = async () => await restoreSession()
 
-    if (authService.getHasAuth()) {
-      restore()
-    }
-  }, [])
+    restoreAuth()
+  }, [restoreSession])
 
   // Sync across tabs logout when user logout from one of them
   useEffect(() => {
