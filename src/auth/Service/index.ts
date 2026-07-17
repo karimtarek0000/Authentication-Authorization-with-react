@@ -12,17 +12,17 @@ import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
 let restorePromise: Promise<Login | null> | null = null
-let refreshPromise: Promise<string | null> | null = null
+let refreshPromise: Promise<string | undefined> | null = null
 
 const initialAuthState: AuthState = {
   user: null,
   permissions: [],
-  isLoading: false,
   isAuth: false,
 }
 
 export const authService = {
   accessToken: '',
+
   refreshSession() {
     if (refreshPromise) return refreshPromise
 
@@ -34,7 +34,7 @@ export const authService = {
         this.accessToken = accessToken
         return accessToken as string
       } catch {
-        return null
+        this.logout()
       } finally {
         refreshPromise = null
       }
@@ -42,7 +42,7 @@ export const authService = {
 
     return refreshPromise
   },
-  async restoreUserInfo(): Promise<Login | null> {
+  async restoreUserInfo() {
     try {
       const { data } = await api.get(PROFILE)
 
@@ -51,6 +51,7 @@ export const authService = {
         permissions: data.permissions,
       }
     } catch {
+      this.logout()
       return null
     }
   },
@@ -79,13 +80,14 @@ export const authService = {
 
     return restorePromise
   },
+  logout() {
+    localStorage.removeItem('hasAuth')
+    location.reload()
+  },
 }
 
 export const useAuthService = () => {
-  const [userAuth, setUserAuth] = useState<AuthState>({
-    ...initialAuthState,
-    isLoading: true,
-  })
+  const [userAuth, setUserAuth] = useState<AuthState>({ ...initialAuthState })
 
   // ----- Actions -----
   const login = useCallback<AuthActions['login']>(async (email: string, password: string) => {
@@ -97,7 +99,6 @@ export const useAuthService = () => {
       setUserAuth({
         user,
         permissions,
-        isLoading: false,
         isAuth: true,
       })
 
@@ -109,26 +110,20 @@ export const useAuthService = () => {
     }
   }, [])
 
-  const logout = useCallback(() => {
-    setUserAuth(initialAuthState)
-    localStorage.removeItem('hasAuth')
-    location.reload()
-  }, [])
+  const logout = useCallback(() => authService.logout(), [])
 
   // ----- UseEffects -----
   // When the app open, restore the session
   useEffect(() => {
     const restore = async () => {
       const result = await authService.restoreSession()
+
       if (result) {
         setUserAuth({
           user: result.user,
           permissions: result.permissions,
-          isLoading: false,
           isAuth: true,
         })
-      } else {
-        setUserAuth(initialAuthState)
       }
     }
 

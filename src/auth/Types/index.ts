@@ -25,7 +25,6 @@ export type AuthState = {
   user: AuthUser | null
   permissions: Permission[]
   isAuth: boolean
-  isLoading: boolean
 }
 
 export type AuthActions = {
