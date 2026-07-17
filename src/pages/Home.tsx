@@ -1,4 +1,4 @@
-import { api, useAuthActions } from '@/auth'
+import { api, useAuthActions, useAuthState } from '@/auth'
 import { Button } from '@/components/common/button'
 import { useState } from 'react'
 import { Link } from 'react-router'
@@ -7,6 +7,9 @@ const Home = () => {
   const [data, setData] = useState()
   const [newData, setNewData] = useState()
   const { logout } = useAuthActions()
+  const { isAuth, permissions, user } = useAuthState()
+
+  console.log(isAuth, permissions, user)
 
   const fetchData = async () => {
     try {
@@ -25,6 +28,13 @@ const Home = () => {
   return (
     <>
       <h1>Home</h1>
+      <h3>isAuth: {isAuth}</h3>
+      <h3>Permissions: {permissions.join(' / ')}</h3>
+      <h3>
+        id: {user?.id}
+        <br />
+        name: {user?.name}
+      </h3>
       <p>{JSON.stringify(data, null, 2)}</p>
       <p>{JSON.stringify(newData, null, 2)}</p>
       <Button onClick={fetchData}>Get the data</Button>

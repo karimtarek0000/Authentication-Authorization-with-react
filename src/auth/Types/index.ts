@@ -9,12 +9,14 @@ export type CanProps = {
 }
 
 type AuthUser = {
+  id: string
   name: string
 }
 
 export type Login = {
   user: AuthUser
   permissions: Permission[]
+  role: string
 }
 
 export type AuthProviderProps = {
@@ -24,6 +26,7 @@ export type AuthProviderProps = {
 export type AuthState = {
   user: AuthUser | null
   permissions: Permission[]
+  role: string
   isAuth: boolean
 }
 
