@@ -1,5 +1,5 @@
+import { AuthActionsContext, AuthStateContext } from '@/auth'
 import { useContext } from 'react'
-import { AuthStateContext, AuthActionsContext } from '@/auth'
 
 export function useAuthState() {
   const context = useContext(AuthStateContext)

@@ -1,12 +1,10 @@
-import { tokenStore } from '@/auth/tokenStore'
-import type { PermissionRequirement } from '@/auth/Types'
-import { checkPermissions } from '@/auth/utils/checkPermissions'
+import { checkPermissions, type PermissionRequirement } from '@/auth'
 import { redirectToLogin } from '@/auth/utils/redirect'
 import { type LoaderFunctionArgs } from 'react-router-dom'
 
 export default function requirePermission(requirement: PermissionRequirement) {
   return async ({ request }: LoaderFunctionArgs) => {
-    const permissions = tokenStore.getPermissions()
+    // const permissions = tokenStore.getPermissions()
 
     if (!permissions.length) {
       return redirectToLogin(request)

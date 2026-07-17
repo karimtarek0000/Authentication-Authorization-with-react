@@ -13,7 +13,6 @@ type AuthUser = {
 }
 
 export type Login = {
-  accessToken: string
   user: AuthUser
   permissions: Permission[]
 }
@@ -23,7 +22,6 @@ export type AuthProviderProps = {
 }
 
 export type AuthState = {
-  accessToken: string
   user: AuthUser | null
   permissions: Permission[]
   isAuth: boolean
@@ -32,7 +30,7 @@ export type AuthState = {
 
 export type AuthActions = {
   login: (email: string, password: string) => Promise<AuthUser>
-  logout: () => Promise<void>
+  logout: () => void
 }
 
 export const PERMISSIONS = {

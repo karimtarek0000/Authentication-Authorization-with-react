@@ -1,4 +1,4 @@
-import { useAuthActions } from '@/auth/hooks/useAuth'
+import { useAuthActions } from '@/auth'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -12,7 +12,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.ChangeEvent) => {
     e.preventDefault()
     setError(null)
     setIsSubmitting(true)

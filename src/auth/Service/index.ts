@@ -8,15 +8,13 @@ import {
   type AuthState,
   type Login,
 } from '@/auth'
-import { tokenStore } from '@/auth/tokenStore'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
-let restorePromise: Promise<Login> | null = null
+let restorePromise: Promise<Login | null> | null = null
 let refreshPromise: Promise<string | null> | null = null
 
 const initialAuthState: AuthState = {
-  accessToken: '',
   user: null,
   permissions: [],
   isLoading: false,
@@ -24,17 +22,18 @@ const initialAuthState: AuthState = {
 }
 
 export const authService = {
-  refreshSession(): Promise<string | null> {
+  accessToken: '',
+  refreshSession() {
     if (refreshPromise) return refreshPromise
 
     refreshPromise = (async () => {
       try {
         const response = await axios.post(REFRESH_TOKEN, {}, { withCredentials: true })
         const { accessToken } = response.data
-        tokenStore.set(accessToken, [])
+
+        this.accessToken = accessToken
         return accessToken as string
       } catch {
-        tokenStore.clear()
         return null
       } finally {
         refreshPromise = null
@@ -43,32 +42,42 @@ export const authService = {
 
     return refreshPromise
   },
-  async restoreSession(): Promise<Login> {
+  async restoreUserInfo(): Promise<Login | null> {
+    try {
+      const { data } = await api.get(PROFILE)
+
+      return {
+        user: { name: data.name },
+        permissions: data.permissions,
+      }
+    } catch {
+      return null
+    }
+  },
+  async restoreSession(): Promise<Login | null> {
+    if (this.accessToken) return null
+
+    if (!localStorage.getItem('hasAuth')) return null
+
     if (restorePromise) return restorePromise
 
     restorePromise = (async () => {
-      const token = await this.refreshSession()
-      if (!token) return null
-
       try {
-        const { data } = await api.get(PROFILE)
+        await this.refreshSession()
 
-        return {
-          accessToken: token,
-          user: { name: data.name, email: data.email },
-          permissions: data.permissions,
-        }
+        if (!this.accessToken) return null
+
+        const info = await this.restoreUserInfo()
+
+        return info
       } catch {
-        tokenStore.clear()
         return null
+      } finally {
+        restorePromise = null
       }
     })()
 
-    try {
-      return await restorePromise
-    } finally {
-      restorePromise = null
-    }
+    return restorePromise
   },
 }
 
@@ -86,15 +95,14 @@ export const useAuthService = () => {
       } = await api.post(LOGIN, { email, password })
 
       setUserAuth({
-        accessToken,
         user,
         permissions,
         isLoading: false,
         isAuth: true,
       })
 
-      localStorage.set('hasAuth', 'true')
-
+      authService.accessToken = accessToken
+      localStorage.setItem('hasAuth', 'true')
       return user
     } catch (error) {
       throw handleError(error as AxiosError)
@@ -104,36 +112,34 @@ export const useAuthService = () => {
   const logout = useCallback(() => {
     setUserAuth(initialAuthState)
     localStorage.removeItem('hasAuth')
-    tokenStore.clear()
-    // authChannel.broadcast('logout')
+    location.reload()
   }, [])
 
   // ----- UseEffects -----
   // When the app open, restore the session
   useEffect(() => {
-    const restore = async () => {
-      const result = await authService.restoreSession()
-
-      if (result) {
-        setUserAuth({
-          accessToken: result.accessToken,
-          user: result.user,
-          permissions: result.permissions,
-          isLoading: false,
-          isAuth: true,
-        })
-      } else {
-        setUserAuth(initialAuthState)
-      }
-    }
-
-    if (localStorage.getItem('hasAuth')) {
-      restore()
-    }
+    // const restore = async () => {
+    //   const result = await authService.restoreSession()
+    //   if (result) {
+    //     setUserAuth({
+    //       user: result.user,
+    //       permissions: result.permissions,
+    //       isLoading: false,
+    //       isAuth: true,
+    //     })
+    //   } else {
+    //     setUserAuth(initialAuthState)
+    //   }
+    // }
+    // if (localStorage.getItem('hasAuth')) {
+    //   restore()
+    // }
   }, [])
 
   return { userAuth, login, logout }
 }
+
+// authChannel.broadcast('logout')
 
 // Notify when token is removed (logout, refresh failed, etc.)
 // useEffect(() => {

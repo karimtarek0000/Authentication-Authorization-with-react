@@ -1,5 +1,4 @@
-import { authService } from '@/auth/authService'
-import { tokenStore } from '@/auth/tokenStore'
+import { authService } from '@/auth'
 import { redirect } from 'react-router'
 
 export function redirectToFromParam(request: Request) {
@@ -15,9 +14,5 @@ export function redirectToLogin(request: Request) {
 }
 
 export const ensureSessionRestored = async () => {
-  if (tokenStore.get()) return
-
-  if (!tokenStore.hasAuth()) return
-
   return await authService.restoreSession()
 }

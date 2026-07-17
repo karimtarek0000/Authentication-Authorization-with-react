@@ -1,13 +1,13 @@
-import { tokenStore } from '@/auth/tokenStore'
+import { authService } from '@/auth'
 import { ensureSessionRestored, redirectToLogin } from '@/auth/utils/redirect'
 import { type LoaderFunctionArgs } from 'react-router'
 
 export default async function protectedLoader({ request }: LoaderFunctionArgs) {
-  await ensureSessionRestored()
+  const info = await ensureSessionRestored()
 
-  if (!tokenStore.get()) {
+  if (!authService.accessToken) {
     return redirectToLogin(request)
   }
 
-  return null
+  return info
 }

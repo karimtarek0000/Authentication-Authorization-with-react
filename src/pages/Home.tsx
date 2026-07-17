@@ -1,4 +1,4 @@
-import { api } from '@/auth/APIclient'
+import { api, useAuthActions } from '@/auth'
 import { Button } from '@/components/common/button'
 import { useState } from 'react'
 import { Link } from 'react-router'
@@ -6,6 +6,7 @@ import { Link } from 'react-router'
 const Home = () => {
   const [data, setData] = useState()
   const [newData, setNewData] = useState()
+  const { logout } = useAuthActions()
 
   const fetchData = async () => {
     try {
@@ -24,7 +25,8 @@ const Home = () => {
       <p>{JSON.stringify(data, null, 2)}</p>
       <p>{JSON.stringify(newData, null, 2)}</p>
       <Button onClick={fetchData}>Get the data</Button>
-      <Link to="/testing">Go to testing page</Link>
+      <Button onClick={logout}>Logout</Button>
+      {/* <Link to="/testing">Go to testing page</Link> */}
     </>
   )
 }

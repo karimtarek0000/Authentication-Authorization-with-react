@@ -1,7 +1,4 @@
-import { abortAllApiRequests } from '@/auth/APIclient'
-import { loginLoader } from '@/auth/Guards/loginLoader'
-import { protectedLoader } from '@/auth/Guards/protectedLoader'
-import { requirePermission } from '@/auth/Guards/protectWithPermission'
+import { loginLoader, protectedLoader } from '@/auth'
 import { Default } from '@/layouts/Default'
 import NotFound from '@/pages/Error'
 import Home from '@/pages/Home'
@@ -26,7 +23,7 @@ const router = createBrowserRouter([
           {
             path: 'testing',
             Component: Testing,
-            loader: requirePermission({ permission: 'edit_profile' }),
+            // loader: requirePermission({ permission: 'edit_profile' }),
           },
         ],
       },
@@ -40,16 +37,16 @@ const router = createBrowserRouter([
 ])
 
 // For abort requestes
-let previousPathname = router.state.location.pathname
+// let previousPathname = router.state.location.pathname
 
-router.subscribe(state => {
-  const currentPathname = state.location.pathname
+// router.subscribe(state => {
+//   const currentPathname = state.location.pathname
 
-  if (currentPathname !== previousPathname) {
-    abortAllApiRequests()
-    previousPathname = currentPathname
-  }
-})
+//   if (currentPathname !== previousPathname) {
+//     abortAllApiRequests()
+//     previousPathname = currentPathname
+//   }
+// })
 
 export const routerProviderProps: RouterProviderProps = {
   router,

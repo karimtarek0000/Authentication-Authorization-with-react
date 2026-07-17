@@ -1,5 +1,4 @@
-import { refreshSession } from '@/auth/refreshSession'
-import { tokenStore } from '@/auth/tokenStore'
+import { authService } from '@/auth'
 import type { InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
 
@@ -28,7 +27,7 @@ api.interceptors.request.use(
       requestConfig.signal = navigationController.signal
     }
 
-    const token = tokenStore.get()
+    const token = authService.accessToken
     if (token) {
       requestConfig.headers.Authorization = `Bearer ${token}`
     }
@@ -63,7 +62,7 @@ api.interceptors.response.use(
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true
         try {
-          const newToken = await refreshSession()
+          const newToken = await authService.refreshSession()
           originalRequest.headers.Authorization = `Bearer ${newToken}`
           return api(originalRequest)
         } catch (refreshError) {

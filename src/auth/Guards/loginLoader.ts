@@ -1,11 +1,11 @@
-import { tokenStore } from '@/auth/tokenStore'
 import { ensureSessionRestored, redirectToFromParam } from '@/auth/utils/redirect'
 import { type LoaderFunctionArgs } from 'react-router'
+import { authService } from '../Service'
 
 export default async function loginLoader({ request }: LoaderFunctionArgs) {
   await ensureSessionRestored()
 
-  if (tokenStore.get()) {
+  if (authService.accessToken) {
     return redirectToFromParam(request)
   }
 
