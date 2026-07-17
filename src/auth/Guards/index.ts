@@ -1,5 +1,5 @@
-import loginLoader from './loginLoader'
 import protectedLoader from './protectedLoader'
+import protectedLoginLoader from './protectedLoginLoader'
 import protectWithPermission from './protectWithPermission'
 
-export { loginLoader, protectedLoader, protectWithPermission }
+export { protectedLoader, protectedLoginLoader, protectWithPermission }
