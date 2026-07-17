@@ -10,7 +10,10 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [res1, res2] = await Promise.all([api.get('/data'), api.get('/new-data')])
+      // const [res1, res2] = await Promise.all([api.get('/data'), api.get('/new-data')])
+
+      const res1 = await api.get('/data')
+      const res2 = await api.get('/new-data')
 
       setData(res1.data)
       setNewData(res2.data)

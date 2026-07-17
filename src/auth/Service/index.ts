@@ -32,7 +32,6 @@ export const authService = {
         const { accessToken } = response.data
 
         this.accessToken = accessToken
-        return accessToken as string
       } catch {
         this.logout()
       } finally {

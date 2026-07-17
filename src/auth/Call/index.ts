@@ -62,8 +62,7 @@ api.interceptors.response.use(
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true
         try {
-          const newToken = await authService.refreshSession()
-          originalRequest.headers.Authorization = `Bearer ${newToken}`
+          await authService.refreshSession()
           return api(originalRequest)
         } catch (refreshError) {
           return Promise.reject(refreshError)
