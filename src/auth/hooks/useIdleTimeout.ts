@@ -1,4 +1,4 @@
-import { authService } from '@/auth/authService'
+import { authService } from '@/auth'
 import { useAuthState } from '@/auth/hooks/useAuth'
 import { useEffect, useRef } from 'react'
 

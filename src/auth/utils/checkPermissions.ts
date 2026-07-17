@@ -1,5 +1,5 @@
 import type { Permission, PermissionRequirement } from '@/auth/Types'
-import { $hasAllPermissions, $hasAnyPermission, $hasPermission } from '../permissions'
+import { $hasAllPermissions, $hasAnyPermission, $hasPermission } from '../Permissions'
 
 export const checkPermissions = (
   userPermissions: Permission[],

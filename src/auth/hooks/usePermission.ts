@@ -1,5 +1,5 @@
 import { useAuthState } from '@/auth/hooks/useAuth'
-import { $hasAllPermissions, $hasAnyPermission, $hasPermission } from '@/auth/permissions'
+import { $hasAllPermissions, $hasAnyPermission, $hasPermission } from '@/auth/Permissions'
 import type { Permission } from '@/auth/Types'
 
 /**

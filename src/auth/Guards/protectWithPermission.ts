@@ -4,7 +4,7 @@ import { checkPermissions } from '@/auth/utils/checkPermissions'
 import { redirectToLogin } from '@/auth/utils/redirect'
 import { type LoaderFunctionArgs } from 'react-router-dom'
 
-export function requirePermission(requirement: PermissionRequirement) {
+export default function requirePermission(requirement: PermissionRequirement) {
   return async ({ request }: LoaderFunctionArgs) => {
     const permissions = tokenStore.getPermissions()
 

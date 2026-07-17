@@ -1,4 +1,4 @@
-import { AuthActionsContext, AuthStateContext } from '@/auth/provider/config'
+import { AuthActionsContext, AuthStateContext } from '@/auth/Provider/config'
 import { useContext } from 'react'
 
 export function useAuthState() {
