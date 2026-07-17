@@ -27,7 +27,7 @@ export const authService = {
   permissions: [],
   hasAuth: localStorage.getItem('hasAuth'),
 
-  refreshSession() {
+  refreshToken() {
     if (refreshPromise) return refreshPromise
 
     refreshPromise = (async () => {
@@ -71,7 +71,7 @@ export const authService = {
 
     restorePromise = (async () => {
       try {
-        await this.refreshSession()
+        await this.refreshToken()
 
         if (!this.accessToken) return null
 
@@ -96,7 +96,7 @@ export const authService = {
 
 export const useAuthService = () => {
   const [userAuth, setUserAuth] = useState<AuthState>({ ...initialAuthState })
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const hasAuth = useRef(localStorage.getItem('hasAuth'))
 
   // ----- Actions -----
@@ -127,7 +127,7 @@ export const useAuthService = () => {
   }, [])
 
   //
-  const refreshSession = useCallback(() => {
+  const refreshToken = useCallback(() => {
     if (refreshPromise) return refreshPromise
 
     refreshPromise = (async () => {
@@ -136,6 +136,8 @@ export const useAuthService = () => {
         const { accessToken } = response.data
 
         setUserAuth(prev => ({ ...prev, accessToken }))
+
+        return accessToken
       } catch {
         logout()
       } finally {
@@ -146,10 +148,11 @@ export const useAuthService = () => {
     return refreshPromise
   }, [logout])
 
-  const restoreUserInfo = useCallback(async () => {
-    setIsLoading(true)
+  const restoreUserInfo = useCallback(async (accessToken: string) => {
     try {
-      const { data } = await api.get(PROFILE)
+      const { data } = await api.get(PROFILE, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
       const { id, name, permissions, role } = data
 
       setUserAuth(prev => ({
@@ -162,8 +165,6 @@ export const useAuthService = () => {
     } catch {
       // logout()
       return null
-    } finally {
-      setIsLoading(false)
     }
   }, [])
 
@@ -176,27 +177,31 @@ export const useAuthService = () => {
 
     restorePromise = (async () => {
       try {
-        await refreshSession()
+        const accessToken = await refreshToken()
 
-        if (!userAuth.accessToken) return null
+        if (!accessToken) return null
 
-        await restoreUserInfo()
+        await restoreUserInfo(accessToken)
 
         return null
       } catch {
         return null
       } finally {
+        setIsLoading(false)
         restorePromise = null
       }
     })()
 
     return restorePromise
-  }, [refreshSession, restoreUserInfo, userAuth.accessToken, userAuth.isAuth])
+  }, [refreshToken, restoreUserInfo, userAuth.isAuth])
 
   // ----- UseEffects -----
   // Restore Session
   useEffect(() => {
-    if (!hasAuth.current) return
+    if (!hasAuth.current) {
+      setIsLoading(false)
+      return
+    }
 
     restoreSession()
   }, [restoreSession])
@@ -212,5 +217,5 @@ export const useAuthService = () => {
     return unsubscribe
   }, [])
 
-  return { userAuth, login, isLoading, logout }
+  return { userAuth, login, isLoading, refreshToken, logout }
 }

@@ -9,14 +9,19 @@ import {
 import { useMemo } from 'react'
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { userAuth, login, logout, isLoading } = useAuthService()
+  const { userAuth, login, logout, isLoading, refreshToken } = useAuthService()
 
-  const actions = useMemo<AuthActions>(() => ({ login, logout }), [login, logout])
+  const actions = useMemo<AuthActions>(
+    () => ({ login, logout, refreshToken }),
+    [login, logout, refreshToken],
+  )
+
+  if (isLoading) return null
 
   return (
     <AuthStateContext.Provider value={userAuth}>
       <AuthActionsContext.Provider value={actions}>
-        {!isLoading ? <Interceptor>{children}</Interceptor> : null}
+        <Interceptor>{children}</Interceptor>
       </AuthActionsContext.Provider>
     </AuthStateContext.Provider>
   )

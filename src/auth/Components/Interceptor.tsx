@@ -1,8 +1,9 @@
-import { api, authService, MAXIMUM_RETRY, navigationController, useAuthState } from '@/auth'
+import { api, MAXIMUM_RETRY, navigationController, useAuthActions, useAuthState } from '@/auth'
 import axios, { type InternalAxiosRequestConfig } from 'axios'
 import { useEffect, type ReactNode } from 'react'
 
 const Interceptor = ({ children }: { children: ReactNode }) => {
+  const { refreshToken } = useAuthActions()
   const { accessToken } = useAuthState()
 
   useEffect(() => {
@@ -16,8 +17,6 @@ const Interceptor = ({ children }: { children: ReactNode }) => {
         }
 
         if (accessToken) {
-          console.log('accessToken: ', accessToken)
-
           requestConfig.headers.Authorization = `Bearer ${accessToken}`
         }
         return requestConfig
@@ -50,7 +49,8 @@ const Interceptor = ({ children }: { children: ReactNode }) => {
           if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true
             try {
-              await authService.refreshSession()
+              const accessToken = await refreshToken()
+              originalRequest.headers.Authorization = `Bearer ${accessToken}`
               return api(originalRequest)
             } catch (refreshError) {
               return Promise.reject(refreshError)
@@ -73,7 +73,7 @@ const Interceptor = ({ children }: { children: ReactNode }) => {
       api.interceptors.request.eject(requestInterceptor)
       api.interceptors.response.eject(responseInterceptor)
     }
-  }, [accessToken])
+  }, [accessToken, refreshToken])
 
   return children
 }

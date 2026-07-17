@@ -33,6 +33,7 @@ export type AuthState = {
 
 export type AuthActions = {
   login: (email: string, password: string) => Promise<void>
+  refreshToken: () => Promise<string | undefined>
   logout: () => void
 }
 
