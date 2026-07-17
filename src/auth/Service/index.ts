@@ -1,4 +1,13 @@
-import { api, handleError, LOGIN, PROFILE, REFRESH_TOKEN, type AuthState, type Login } from '@/auth'
+import {
+  api,
+  authChannel,
+  handleError,
+  LOGIN,
+  PROFILE,
+  REFRESH_TOKEN,
+  type AuthState,
+  type Login,
+} from '@/auth'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -86,7 +95,7 @@ export const authService = {
   logout() {
     localStorage.removeItem('hasAuth')
     location.reload()
-    // authChannel.broadcast('logout')
+    authChannel.broadcast('logout')
   },
 }
 
@@ -138,16 +147,16 @@ export const useAuthService = () => {
     }
   }, [])
 
-  // This is subscribing to the authChannel to listen for logout events
-  // useEffect(() => {
-  //   const unsubscribe = authChannel.subscribe(event => {
-  //     if (event === 'logout') {
-  //       tokenStore.clear()
-  //     }
-  //   })
+  // Sync across tabs logout when user logout from one of them
+  useEffect(() => {
+    const unsubscribe = authChannel.subscribe(event => {
+      if (event === 'logout') {
+        location.reload()
+      }
+    })
 
-  //   return unsubscribe
-  // }, [])
+    return unsubscribe
+  }, [])
 
   return { userAuth, login, logout }
 }
