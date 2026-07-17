@@ -9,12 +9,8 @@ const Home = () => {
   const { logout } = useAuthActions()
   const { isAuth, permissions, user } = useAuthState()
 
-  console.log(isAuth, permissions, user)
-
   const fetchData = async () => {
     try {
-      // const [res1, res2] = await Promise.all([api.get('/data'), api.get('/new-data')])
-
       const res1 = await api.get('/data')
       const res2 = await api.get('/new-data')
 
