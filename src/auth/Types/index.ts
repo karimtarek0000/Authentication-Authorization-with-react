@@ -24,6 +24,7 @@ export type AuthProviderProps = {
 }
 
 export type AuthState = {
+  accessToken: string
   user: AuthUser | null
   permissions: Permission[]
   role: string

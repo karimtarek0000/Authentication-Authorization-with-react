@@ -9,12 +9,13 @@ import {
   type Login,
 } from '@/auth'
 import axios, { AxiosError } from 'axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 let restorePromise: Promise<Login | null> | null = null
 let refreshPromise: Promise<string | undefined> | null = null
 
 const initialAuthState: AuthState = {
+  accessToken: '',
   user: null,
   permissions: [],
   role: '',
@@ -95,6 +96,8 @@ export const authService = {
 
 export const useAuthService = () => {
   const [userAuth, setUserAuth] = useState<AuthState>({ ...initialAuthState })
+  const [isLoading, setIsLoading] = useState(false)
+  const hasAuth = useRef(localStorage.getItem('hasAuth'))
 
   // ----- Actions -----
   const login = useCallback(async (email: string, password: string) => {
@@ -105,42 +108,97 @@ export const useAuthService = () => {
 
       setUserAuth({
         user: { id, name },
+        accessToken,
         permissions,
         role,
         isAuth: true,
       })
 
-      Object.assign(authService, { accessToken, permissions })
       localStorage.setItem('hasAuth', 'true')
     } catch (error) {
       throw handleError(error as AxiosError)
     }
   }, [])
 
-  const logout = useCallback(() => authService.logout(), [])
+  const logout = useCallback(() => {
+    localStorage.removeItem('hasAuth')
+    location.reload()
+    authChannel.broadcast('logout')
+  }, [])
 
-  const restoreSession = useCallback(async () => {
-    const result = await authService.restoreSession()
+  //
+  const refreshSession = useCallback(() => {
+    if (refreshPromise) return refreshPromise
 
-    if (result) {
-      const { user, permissions, role } = result
-      setUserAuth({
-        user,
-        permissions,
+    refreshPromise = (async () => {
+      try {
+        const response = await axios.post(REFRESH_TOKEN, {}, { withCredentials: true })
+        const { accessToken } = response.data
+
+        setUserAuth(prev => ({ ...prev, accessToken }))
+      } catch {
+        logout()
+      } finally {
+        refreshPromise = null
+      }
+    })()
+
+    return refreshPromise
+  }, [logout])
+
+  const restoreUserInfo = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const { data } = await api.get(PROFILE)
+      const { id, name, permissions, role } = data
+
+      setUserAuth(prev => ({
+        ...prev,
+        user: { id, name },
+        permissions: permissions,
         role,
         isAuth: true,
-      })
+      }))
+    } catch {
+      // logout()
+      return null
+    } finally {
+      setIsLoading(false)
     }
   }, [])
+
+  const restoreSession = useCallback(() => {
+    if (userAuth.isAuth) return null
+
+    if (!hasAuth.current) return null
+
+    if (restorePromise) return restorePromise
+
+    restorePromise = (async () => {
+      try {
+        await refreshSession()
+
+        if (!userAuth.accessToken) return null
+
+        await restoreUserInfo()
+
+        return null
+      } catch {
+        return null
+      } finally {
+        restorePromise = null
+      }
+    })()
+
+    return restorePromise
+  }, [refreshSession, restoreUserInfo, userAuth.accessToken, userAuth.isAuth])
 
   // ----- UseEffects -----
   // Restore Session
   useEffect(() => {
-    if (!authService.hasAuth) return
+    if (!hasAuth.current) return
 
-    const restoreAuth = async () => await restoreSession()
-
-    restoreAuth()
+    restoreSession()
   }, [restoreSession])
 
   // Sync across tabs logout when user logout from one of them
@@ -154,5 +212,5 @@ export const useAuthService = () => {
     return unsubscribe
   }, [])
 
-  return { userAuth, login, logout }
+  return { userAuth, login, isLoading, logout }
 }

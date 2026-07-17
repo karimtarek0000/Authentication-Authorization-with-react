@@ -16,7 +16,7 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         Component: Dashboard,
-        loader: protectedLoader,
+        // loader: protectedLoader,
         children: [
           {
             index: true,
@@ -25,14 +25,14 @@ const router = createBrowserRouter([
           {
             path: 'testing',
             Component: Testing,
-            loader: protectWithPermission({ permission: 'edit_testing' }),
+            // loader: protectWithPermission({ permission: 'edit_testing' }),
           },
         ],
       },
       {
         path: '/auth',
         Component: Auth,
-        loader: protectedLoginLoader,
+        // loader: protectedLoginLoader,
         children: [
           {
             index: true,
