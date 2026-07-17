@@ -24,7 +24,7 @@ const initialAuthState: AuthState = {
 export const authService = {
   accessToken: '',
   permissions: [],
-  hasAuth: JSON.stringify(localStorage.getItem('hasAuth')),
+  hasAuth: localStorage.getItem('hasAuth'),
 
   refreshSession() {
     if (refreshPromise) return refreshPromise
@@ -64,7 +64,7 @@ export const authService = {
   async restoreSession(): Promise<Login | null> {
     if (this.accessToken) return null
 
-    if (!localStorage.getItem('hasAuth')) return null
+    if (!this.hasAuth) return null
 
     if (restorePromise) return restorePromise
 
