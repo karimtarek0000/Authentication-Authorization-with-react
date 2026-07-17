@@ -4,7 +4,7 @@ const Testing = () => {
   return (
     <>
       <h1 className=" text-7xl">Testing</h1>
-      <Link to="/">Go to home</Link>
+      <Link to="/dashboard">Go to home</Link>
     </>
   )
 }

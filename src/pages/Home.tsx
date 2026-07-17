@@ -35,7 +35,7 @@ const Home = () => {
       <p>{JSON.stringify(newData, null, 2)}</p>
       <Button onClick={fetchData}>Get the data</Button>
       <Button onClick={logout}>Logout</Button>
-      {/* <Link to="/testing">Go to testing page</Link> */}
+      <Link to="/dashboard/testing">Go to testing page</Link>
     </>
   )
 }

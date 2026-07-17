@@ -1,9 +1,7 @@
 import { loginLoader, protectedLoader } from '@/auth'
-import { Default } from '@/layouts/Default'
-import NotFound from '@/pages/Error'
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Testing from '@/pages/Testing'
+import Auth from '@/layouts/Auth'
+import { Dashboard } from '@/layouts/Dashboard'
+import { Home, Landing, Login, NotFound, SignUp, Testing } from '@/pages'
 import type { RouterProviderProps } from 'react-router-dom'
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -13,7 +11,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        Component: Default,
+        Component: Landing,
+      },
+      {
+        path: '/dashboard',
+        Component: Dashboard,
         loader: protectedLoader,
         children: [
           {
@@ -28,9 +30,19 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: '/login',
-        Component: Login,
+        path: '/auth',
+        Component: Auth,
         loader: loginLoader,
+        children: [
+          {
+            index: true,
+            Component: Login,
+          },
+          {
+            path: 'signup',
+            Component: SignUp,
+          },
+        ],
       },
     ],
   },
