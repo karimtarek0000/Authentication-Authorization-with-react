@@ -1,22 +1,17 @@
-import { authService, checkPermissions, type PermissionRequirement } from '@/auth'
-import { redirectToLogin } from '@/auth/utils/redirect'
-import { redirect, type LoaderFunctionArgs } from 'react-router-dom'
+import { $checkPermissions, authService, type PermissionRequirement } from '@/auth'
+import { type LoaderFunctionArgs } from 'react-router-dom'
+import { redirectToLogin } from '../utils/redirect'
 
-export default function requirePermission(requirement: PermissionRequirement) {
+export default function protectWithPermission(requirement: PermissionRequirement) {
   return async ({ request }: LoaderFunctionArgs) => {
-    const restoreSession = await authService.restoreSession()
+    await authService.restoreSession()
 
-    const permissions = restoreSession?.permissions
-    if (!permissions?.length) {
+    const permissions = authService?.permissions
+
+    if (!permissions?.length || !$checkPermissions(permissions, requirement)) {
       return redirectToLogin(request)
     }
 
-    const allowed = checkPermissions(permissions, requirement)
-
-    if (!allowed) {
-      redirect('/dashboard')
-    }
-
-    return null
+    return true
   }
 }

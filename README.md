@@ -25,7 +25,7 @@ src/auth/
 ├── permissions/
 │   └── index.ts                 # Permission constants and helpers
 ├── utils/
-│   ├── checkPermissions.ts      # Permission evaluation utilities
+│   ├── $checkPermissions.ts      # Permission evaluation utilities
 │   └── redirect.ts              # Route redirect helpers
 ├── Types/
 │   ├── provider.type.ts         # Provider/context type definitions

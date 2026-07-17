@@ -1,4 +1,4 @@
-import { checkPermissions, useAuthState, type CanProps } from '@/auth'
+import { $checkPermissions, useAuthState, type CanProps } from '@/auth'
 
 export function CanView({
   permissionRequirement,
@@ -7,7 +7,7 @@ export function CanView({
 }: CanProps) {
   const { permissions } = useAuthState()
 
-  const allowed = checkPermissions(permissions, permissionRequirement)
+  const allowed = $checkPermissions(permissions, permissionRequirement)
 
   return <>{allowed ? children : fallback}</>
 }

@@ -15,7 +15,7 @@ function $hasAllPermissions(userPermissions: Permission[], required: Permission[
   return required.every(p => userPermissions.includes(p))
 }
 
-export const checkPermissions = (
+export const $checkPermissions = (
   userPermissions: Permission[],
   permissionRequirement: PermissionRequirement,
 ): boolean => {

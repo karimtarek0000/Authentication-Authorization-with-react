@@ -14,6 +14,7 @@ const initialAuthState: AuthState = {
 
 export const authService = {
   accessToken: '',
+  permissions: [],
 
   refreshSession() {
     if (refreshPromise) return refreshPromise
@@ -37,6 +38,8 @@ export const authService = {
     try {
       const { data } = await api.get(PROFILE)
       const { id, name, permissions, role } = data
+
+      this.permissions = permissions
 
       return {
         user: { id, name },
@@ -104,8 +107,7 @@ export const useAuthService = () => {
         isAuth: true,
       })
 
-      authService.accessToken = accessToken
-
+      Object.assign(authService, { accessToken, permissions })
       localStorage.setItem('hasAuth', 'true')
     } catch (error) {
       throw handleError(error as AxiosError)
