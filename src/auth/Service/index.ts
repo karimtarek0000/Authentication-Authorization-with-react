@@ -155,16 +155,5 @@ export const useAuthService = () => {
     restoreSession()
   }, [restoreSession])
 
-  // Sync across tabs logout when user logout from one of them
-  useEffect(() => {
-    const unsubscribe = authChannel.subscribe(event => {
-      if (event === 'logout') {
-        location.reload()
-      }
-    })
-
-    return unsubscribe
-  }, [])
-
   return { userAuth, login, loginWithOAuth, isLoading, refreshToken, logout }
 }

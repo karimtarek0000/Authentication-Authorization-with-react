@@ -1,7 +1,9 @@
 import {
   AuthActionsContext,
   AuthStateContext,
+  Idle,
   Interceptor,
+  SyncTabs,
   useAuthService,
   type AuthActions,
   type AuthProviderProps,
@@ -21,7 +23,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return (
     <AuthStateContext.Provider value={userAuth}>
       <AuthActionsContext.Provider value={actions}>
-        <Interceptor>{children}</Interceptor>
+        <Interceptor>
+          <SyncTabs>
+            <Idle>{children}</Idle>
+          </SyncTabs>
+        </Interceptor>
       </AuthActionsContext.Provider>
     </AuthStateContext.Provider>
   )

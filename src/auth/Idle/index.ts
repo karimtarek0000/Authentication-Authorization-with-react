@@ -2,7 +2,7 @@ import { useAuthActions, useAuthState } from '@/auth'
 import { useEffect, useRef } from 'react'
 
 const IDLE_LIMIT = 15 * 60 * 1000 // 15 minutes
-const THROTTLE_INTERVAL = 1000
+const THROTTLE_INTERVAL = 2000
 
 const ACTIVITY_EVENTS = ['keydown', 'click', 'scroll', 'touchstart', 'mousemove']
 
