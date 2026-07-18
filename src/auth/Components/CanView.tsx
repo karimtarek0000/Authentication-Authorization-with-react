@@ -3,11 +3,15 @@ import { $checkPermissions, useAuthState, type CanProps } from '@/auth'
 export default function CanView({
   permissionRequirement,
   children,
-  fallback = 'No has any permission',
+  fallback = 'You not authorized to view this section',
 }: CanProps) {
   const { permissions } = useAuthState()
 
   const allowed = $checkPermissions(permissions, permissionRequirement)
 
-  return <>{allowed ? children : fallback}</>
+  if (!allowed) {
+    return <h3>{fallback}</h3>
+  }
+
+  return children
 }
