@@ -148,25 +148,28 @@ export const useAuthService = () => {
     return refreshPromise
   }, [logout])
 
-  const restoreUserInfo = useCallback(async (accessToken: string) => {
-    try {
-      const { data } = await api.get(PROFILE, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      const { id, name, permissions, role } = data
+  const restoreUserInfo = useCallback(
+    async (accessToken: string) => {
+      try {
+        const { data } = await api.get(PROFILE, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        const { id, name, permissions, role } = data
 
-      setUserAuth(prev => ({
-        ...prev,
-        user: { id, name },
-        permissions: permissions,
-        role,
-        isAuth: true,
-      }))
-    } catch {
-      // logout()
-      return null
-    }
-  }, [])
+        setUserAuth(prev => ({
+          ...prev,
+          user: { id, name },
+          permissions: permissions,
+          role,
+          isAuth: true,
+        }))
+      } catch {
+        logout()
+        return null
+      }
+    },
+    [logout],
+  )
 
   const restoreSession = useCallback(() => {
     if (userAuth.isAuth) return null
@@ -177,14 +180,12 @@ export const useAuthService = () => {
 
     restorePromise = (async () => {
       try {
-        const accessToken = await refreshToken()
+        const newAccessToken = await refreshToken()
 
-        if (!accessToken) return null
+        if (!newAccessToken) return null
 
-        await restoreUserInfo(accessToken)
+        await restoreUserInfo(newAccessToken)
 
-        return null
-      } catch {
         return null
       } finally {
         setIsLoading(false)
