@@ -8,8 +8,8 @@ import {
 } from '@/auth'
 import { useMemo } from 'react'
 
-export default function AuthProvider({ children }: AuthProviderProps) {
-  const { userAuth, login, logout, isLoading, refreshToken } = useAuthService()
+export function AuthProvider({ children }: AuthProviderProps) {
+  const { isLoading, userAuth, login, logout, refreshToken } = useAuthService()
 
   const actions = useMemo<AuthActions>(
     () => ({ login, logout, refreshToken }),
