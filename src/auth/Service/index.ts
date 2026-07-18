@@ -26,7 +26,7 @@ const initialAuthState: AuthState = {
 }
 
 export const useAuthService = () => {
-  const [userAuth, setUserAuth] = useState<AuthState>({ ...initialAuthState })
+  const [userAuth, setUserAuth] = useState<AuthState>(initialAuthState)
   const [isLoading, setIsLoading] = useState(true)
   const hasAuth = useRef(localStorage.getItem('hasAuth'))
 
