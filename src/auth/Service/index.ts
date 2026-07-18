@@ -30,7 +30,6 @@ export const useAuthService = () => {
   const [isLoading, setIsLoading] = useState(true)
   const hasAuth = useRef(localStorage.getItem('hasAuth'))
 
-  // ----- Actions -----
   const setAuthData = (data: any) => {
     const { id, name, permissions, role, accessToken } = data
 
@@ -45,6 +44,7 @@ export const useAuthService = () => {
     localStorage.setItem('hasAuth', 'true')
   }
 
+  // =================== Handlers ===================
   const login = useCallback(async (email: string, password: string) => {
     try {
       const { data } = await api.post(LOGIN, { email, password })
@@ -75,6 +75,7 @@ export const useAuthService = () => {
     authChannel.broadcast('logout')
   }, [])
 
+  // =================== Restore Session Functions ===================
   const refreshToken = useCallback(() => {
     if (refreshPromise) return refreshPromise
 
@@ -144,8 +145,7 @@ export const useAuthService = () => {
     return restorePromise
   }, [refreshToken, restoreUserInfo, userAuth.isAuth])
 
-  // ----- UseEffects -----
-  // Restore Session
+  // =================== Restore Session Invoic ===================
   useEffect(() => {
     if (!hasAuth.current) {
       setIsLoading(false)
