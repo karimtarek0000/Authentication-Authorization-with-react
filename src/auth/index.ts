@@ -1,4 +1,5 @@
 export * from './Call'
+export * from './Components'
 export * from './Config'
 export * from './Guards'
 export * from './Idle'
@@ -9,7 +10,3 @@ export * from './Service'
 export * from './Sync'
 export * from './Types'
 export * from './utils'
-import CanView from './Components/CanView'
-import Interceptor from './Components/Interceptor'
-
-export { CanView, Interceptor }

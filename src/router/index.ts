@@ -1,4 +1,3 @@
-import { protectedLoader, protectedLoginLoader, protectWithPermission } from '@/auth'
 import Auth from '@/layouts/Auth'
 import { Dashboard } from '@/layouts/Dashboard'
 import { Home, Landing, Login, NotFound, SignUp, Testing } from '@/pages'
@@ -16,7 +15,6 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         Component: Dashboard,
-        // loader: protectedLoader,
         children: [
           {
             index: true,
@@ -25,14 +23,12 @@ const router = createBrowserRouter([
           {
             path: 'testing',
             Component: Testing,
-            // loader: protectWithPermission({ permission: 'edit_testing' }),
           },
         ],
       },
       {
         path: '/auth',
         Component: Auth,
-        // loader: protectedLoginLoader,
         children: [
           {
             index: true,
