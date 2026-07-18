@@ -1,3 +1,4 @@
+import { abortAllApiRequests } from '@/auth'
 import Auth from '@/layouts/Auth'
 import { Dashboard } from '@/layouts/Dashboard'
 import { Home, Landing, Login, NotFound, OAuthCallback, SignUp, Testing } from '@/pages'
@@ -49,16 +50,16 @@ const router = createBrowserRouter([
 ])
 
 // For abort requestes
-// let previousPathname = router.state.location.pathname
+let previousPathname = router.state.location.pathname
 
-// router.subscribe(state => {
-//   const currentPathname = state.location.pathname
+router.subscribe(state => {
+  const currentPathname = state.location.pathname
 
-//   if (currentPathname !== previousPathname) {
-//     abortAllApiRequests()
-//     previousPathname = currentPathname
-//   }
-// })
+  if (currentPathname !== previousPathname) {
+    abortAllApiRequests()
+    previousPathname = currentPathname
+  }
+})
 
 export const routerProviderProps: RouterProviderProps = {
   router,
