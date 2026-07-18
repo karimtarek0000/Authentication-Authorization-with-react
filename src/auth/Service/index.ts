@@ -126,7 +126,6 @@ export const useAuthService = () => {
     authChannel.broadcast('logout')
   }, [])
 
-  //
   const refreshToken = useCallback(() => {
     if (refreshPromise) return refreshPromise
 

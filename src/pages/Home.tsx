@@ -9,8 +9,6 @@ const Home = () => {
   const { logout } = useAuthActions()
   const { isAuth, permissions, user, accessToken } = useAuthState()
 
-  console.log(permissions, isAuth, accessToken)
-
   const fetchData = async () => {
     try {
       const res1 = await api.get('/data')
