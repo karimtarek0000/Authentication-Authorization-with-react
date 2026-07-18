@@ -42,7 +42,7 @@ export default function OAuthCallback() {
       ) : (
         <>
           <p>{errorMessage}</p>
-          <Link to="/auth/login">Back to login</Link>
+          <Link to="/auth">Back to login</Link>
         </>
       )}
     </main>
