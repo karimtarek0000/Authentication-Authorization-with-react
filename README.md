@@ -52,6 +52,7 @@ src/auth/
 - **OAuth Login** via Google and GitHub, with CSRF-style state verification
 - **Automatic Token Refresh** with race-condition handling (singleton in-flight promise)
 - **Request Retry** on transient failures via Axios response interceptor
+- **In-Flight Request Cancellation** on route navigation, via a shared `AbortController` subscribed to router state changes
 - **Role-Based Access Control (RBAC)** with type-safe permissions
 - **HOC-Based Route Protection** (`Guard`, `GuardAuth`, `GuardPermissions`) wrapping layouts
 - **Permission Guards** at both UI level (`<CanView>`) and route level (`GuardPermissions`)
