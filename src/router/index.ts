@@ -1,6 +1,6 @@
 import Auth from '@/layouts/Auth'
 import { Dashboard } from '@/layouts/Dashboard'
-import { Home, Landing, Login, NotFound, SignUp, Testing } from '@/pages'
+import { Home, Landing, Login, NotFound, OAuthCallback, SignUp, Testing } from '@/pages'
 import type { RouterProviderProps } from 'react-router-dom'
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -37,6 +37,10 @@ const router = createBrowserRouter([
           {
             path: 'signup',
             Component: SignUp,
+          },
+          {
+            path: 'callback/:provider',
+            Component: OAuthCallback,
           },
         ],
       },

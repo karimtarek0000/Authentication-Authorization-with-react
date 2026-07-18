@@ -12,6 +12,9 @@ export type Login = {
   role: string
 }
 
+// ================= OAUTH =================
+export type OAuthProvider = 'google' | 'github'
+
 // ================= CONTEXT_API =================
 export type AuthProviderProps = {
   children: ReactNode
@@ -28,6 +31,7 @@ export type AuthState = {
 export type AuthActions = {
   login: (email: string, password: string) => Promise<void>
   refreshToken: () => Promise<string | undefined>
+  loginWithOAuth: (provider: OAuthProvider, code: string) => Promise<void>
   logout: () => void
 }
 

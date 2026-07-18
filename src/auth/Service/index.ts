@@ -1,12 +1,15 @@
 import {
   api,
   authChannel,
+  getOAuthRedirectURL,
   handleError,
   LOGIN,
+  OAUTH_PLATFORM,
   PROFILE,
   REFRESH_TOKEN,
   type AuthState,
   type Login,
+  type OAuthProvider,
 } from '@/auth'
 import axios, { AxiosError } from 'axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -28,25 +31,43 @@ export const useAuthService = () => {
   const hasAuth = useRef(localStorage.getItem('hasAuth'))
 
   // ----- Actions -----
+  const setAuthData = (data: any) => {
+    const { id, name, permissions, role, accessToken } = data
+
+    setUserAuth({
+      user: { id, name },
+      accessToken,
+      permissions,
+      role,
+      isAuth: true,
+    })
+
+    localStorage.setItem('hasAuth', 'true')
+  }
+
   const login = useCallback(async (email: string, password: string) => {
     try {
       const { data } = await api.post(LOGIN, { email, password })
-
-      const { id, name, permissions, role, accessToken } = data
-
-      setUserAuth({
-        user: { id, name },
-        accessToken,
-        permissions,
-        role,
-        isAuth: true,
-      })
-
-      localStorage.setItem('hasAuth', 'true')
+      setAuthData(data)
     } catch (error) {
       throw handleError(error as AxiosError)
     }
   }, [])
+
+  const loginWithOAuth = async (provider: OAuthProvider, code: string) => {
+    try {
+      const endpoint = OAUTH_PLATFORM[provider]
+
+      const { data } = await api.post(endpoint, {
+        code,
+        redirectURL: getOAuthRedirectURL(provider),
+      })
+
+      setAuthData(data)
+    } catch (error) {
+      throw handleError(error as AxiosError)
+    }
+  }
 
   const logout = useCallback(() => {
     localStorage.removeItem('hasAuth')
@@ -145,5 +166,5 @@ export const useAuthService = () => {
     return unsubscribe
   }, [])
 
-  return { userAuth, login, isLoading, refreshToken, logout }
+  return { userAuth, login, loginWithOAuth, isLoading, refreshToken, logout }
 }

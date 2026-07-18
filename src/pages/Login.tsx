@@ -1,6 +1,6 @@
-import { useAuthActions } from '@/auth'
+import { startGithubLogin, startGoogleLogin, useAuthActions } from '@/auth'
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router'
 
 export default function Login() {
   const { login } = useAuthActions()
@@ -63,6 +63,24 @@ export default function Login() {
           {isSubmitting ? 'جاري الدخول...' : 'دخول'}
         </button>
       </form>
+
+      <div className="mt-6 space-y-3">
+        <button
+          type="button"
+          onClick={startGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-2 px-4 hover:shadow-md transition"
+        >
+          <span className="font-medium">Continue with Google</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={startGithubLogin}
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-2 px-4 hover:shadow-md transition"
+        >
+          <span className="font-medium">Continue with GitHub</span>
+        </button>
+      </div>
     </div>
   )
 }
