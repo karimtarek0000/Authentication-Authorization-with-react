@@ -1,13 +1,6 @@
 import type { ReactNode } from 'react'
 
-export type AuthEvent = 'logout'
-
-export type CanProps = {
-  permissionRequirement: PermissionRequirement
-  children: ReactNode
-  fallback?: ReactNode
-}
-
+// ================= USER =================
 type AuthUser = {
   id: string
   name: string
@@ -19,6 +12,7 @@ export type Login = {
   role: string
 }
 
+// ================= CONTEXT_API =================
 export type AuthProviderProps = {
   children: ReactNode
 }
@@ -37,6 +31,10 @@ export type AuthActions = {
   logout: () => void
 }
 
+// ================= SYNC =================
+export type AuthEvent = 'logout'
+
+// ================= PERMISSIONS =================
 export const PERMISSIONS = {
   VIEW_DASHBOARD: 'view_dashboard',
   EDIT_PROFILE: 'edit_profile',

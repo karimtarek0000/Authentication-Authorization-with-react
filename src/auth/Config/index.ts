@@ -11,9 +11,3 @@ export const GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 // Backend exchange endpoints, resolved against `api`'s baseURL like LOGIN/PROFILE
 export const OAUTH_GOOGLE = '/auth/google'
 export const OAUTH_GITHUB = '/auth/github'
-
-import { createContext } from 'react'
-import type { AuthState, AuthActions } from '../Types'
-
-export const AuthStateContext = createContext<AuthState | null>(null)
-export const AuthActionsContext = createContext<AuthActions | null>(null)
