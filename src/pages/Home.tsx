@@ -7,9 +7,9 @@ const Home = () => {
   const [data, setData] = useState()
   const [newData, setNewData] = useState()
   const { logout } = useAuthActions()
-  const { isAuth, permissions, user } = useAuthState()
+  const { isAuth, permissions, user, accessToken } = useAuthState()
 
-  console.log(permissions, isAuth)
+  console.log(permissions, isAuth, accessToken)
 
   const fetchData = async () => {
     try {
@@ -27,6 +27,7 @@ const Home = () => {
     <>
       <h1>Home</h1>
       <h3>isAuth: {`${isAuth}`}</h3>
+      <h3>accessToken: {accessToken}</h3>
       <h3>Permissions: {permissions.join(' / ')}</h3>
       <h3>
         id: {user?.id}

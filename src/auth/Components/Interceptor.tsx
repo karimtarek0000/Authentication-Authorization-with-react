@@ -53,7 +53,6 @@ const Interceptor = ({ children }: { children: ReactNode }) => {
             try {
               const newAccessToken = await refreshToken()
               originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-
               return api(originalRequest)
             } catch (refreshError) {
               return Promise.reject(refreshError)
