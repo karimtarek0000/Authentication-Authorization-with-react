@@ -1,6 +1,6 @@
 # Authentication & Authorization in React
 
-Authentication system for applications. Built with React typescript, React Router (data APIs), and Axios.
+Authentication and Authorization system for applications. Built with React typescript, React Router (data APIs), and Axios.
 
 ## Folder Structure
 
