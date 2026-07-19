@@ -1,4 +1,4 @@
-# Authentication & Authorization in React
+# Authentication & Authorization Flow in React
 
 Authentication and Authorization system for applications. Built with React typescript, React Router (data APIs), and Axios.
 
