@@ -1,6 +1,5 @@
 import { abortAllApiRequests } from '@/auth'
-import Auth from '@/layouts/Auth'
-import { Dashboard } from '@/layouts/Dashboard'
+import { Auth, Dashboard } from '@/layouts'
 import { Home, Landing, Login, NotFound, OAuthCallback, SignUp, Testing } from '@/pages'
 import type { RouterProviderProps } from 'react-router-dom'
 import { createBrowserRouter } from 'react-router-dom'
