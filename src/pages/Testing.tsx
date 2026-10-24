@@ -22,6 +22,8 @@ const Testing = GuardPermissions(() => {
       </CanView>
     </>
   )
+}, {
+    permission: 'edit_profile',
 })
 
 export default Testing
