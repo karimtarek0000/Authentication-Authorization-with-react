@@ -1,12 +1,12 @@
 import { abortAllApiRequests } from '@/auth'
 import { Auth, Dashboard } from '@/layouts'
-import { Home, Landing, Login, NotFound, OAuthCallback, SignUp, Testing } from '@/pages'
+import { Home, Landing, Login, Error, OAuthCallback, SignUp, Testing } from '@/pages'
 import type { RouterProviderProps } from 'react-router-dom'
 import { createBrowserRouter } from 'react-router-dom'
 
 const router = createBrowserRouter([
   {
-    ErrorBoundary: NotFound,
+    ErrorBoundary: Error,
     children: [
       {
         path: '/',
